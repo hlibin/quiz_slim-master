@@ -30,10 +30,10 @@ def dense_block(net, layers=40, growth=12, scope='block'):
     return net
 
 def transtion_layers(net, num_outputs, scope='block'):
-	net = slim.batch_norm(net, scope = scope + '_bn')
-	net = slim.conv2d(net, num_outputs, [1, 1], padding='SAME', scope=scope + '_conv')
-	net = slim.avg_pool2d(net, [2, 2], stride=2, padding='VALID', scope=scope + '_avg_pool')
-	return net
+    net = slim.batch_norm(net, scope = scope + '_bn')
+    net = slim.conv2d(net, num_outputs, [1, 1], padding='SAME', scope=scope + '_conv')
+    net = slim.avg_pool2d(net, [2, 2], stride=2, padding='VALID', scope=scope + '_avg_pool')
+    return net
 
 def densenet(images, num_classes=1001, is_training=False,
              dropout_keep_prob=0.8,
@@ -70,53 +70,53 @@ def densenet(images, num_classes=1001, is_training=False,
             ##########################
             # Put your code here.
             ##########################
-			end_point = 'Convolution'
-			net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
-			end_points[end_point] = net
+            end_point = 'Convolution'
+            net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
+            end_points[end_point] = net
 			
-			end_point = 'Max_pool'
-			net = slim.max_pool2d(net, [3, 3], stride=2, scope=end_point)
-			end_points[end_point] = net
+            end_point = 'Max_pool'
+            net = slim.max_pool2d(net, [3, 3], stride=2, scope=end_point)
+            end_points[end_point] = net
 			
-			end_point = 'first_block'
-			net = dense_block(net, 6, growth, end_point)
-			end_points[end_point] = net
+            end_point = 'first_block'
+            net = dense_block(net, 6, growth, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'first_layer'
-			net = transtion_layers(net, growth*compression_rate, end_point)
-			end_points[end_point] = net
+            end_point = 'first_layer'
+            net = transtion_layers(net, growth*compression_rate, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'first_drpout'
-			net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-			end_points[end_point] = net
+            end_point = 'first_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
 			
-			end_point = 'second_block'
-			net = dense_block(net, 12, growth, end_point)
-			end_points[end_point] = net
+            end_point = 'second_block'
+            net = dense_block(net, 12, growth, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'second_layer'
-			net = transtion_layers(net, growth*compression_rate, end_point)
-			end_points[end_point] = net
+            end_point = 'second_layer'
+            net = transtion_layers(net, growth*compression_rate, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'second_drpout'
-			net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-			end_points[end_point] = net
+            end_point = 'second_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
 			
-			end_point = 'third_block'
-			net = dense_block(net, 24, growth, end_point)
-			end_points[end_point] = net
+            end_point = 'third_block'
+            net = dense_block(net, 24, growth, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'third_layer'
-			net = transtion_layers(net, growth*compression_rate, end_point)
-			end_points[end_point] = net
+            end_point = 'third_layer'
+            net = transtion_layers(net, growth*compression_rate, end_point)
+            end_points[end_point] = net
 			
-			end_point = 'third_drpout'
-			net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-			end_points[end_point] = net
+            end_point = 'third_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
 			
-			###每个Convolution layer（除了第一个）后加一个Drop out
+            ###每个Convolution layer（除了第一个）后加一个Drop out
 			
-			###三个Dense block
+            ###三个Dense block
 
     return logits, end_points
 
