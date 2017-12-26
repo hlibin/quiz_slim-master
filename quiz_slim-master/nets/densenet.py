@@ -56,7 +56,7 @@ def densenet(images, num_classes=1001, is_training=False,
     """
     growth = 24
     compression_rate = 0.5#压缩，用在transtion_layer  num_outputs = num_outputs*0.5
-	keep_prob = dropout_keep_prob if is_training else 1
+    keep_prob = dropout_keep_prob if is_training else 1
 
     def reduce_dim(input_feature):
         return int(int(input_feature.shape[-1]) * compression_rate)
