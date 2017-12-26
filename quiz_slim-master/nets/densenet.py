@@ -118,7 +118,7 @@ def densenet(images, num_classes=1001, is_training=False,
 			
             ###三个Dense block
 
-    return logits, end_points
+    return net, end_points
 
 
 def bn_drp_scope(is_training=True, keep_prob=0.8):
