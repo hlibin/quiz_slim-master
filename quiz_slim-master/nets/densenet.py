@@ -75,6 +75,7 @@ def densenet(images, num_classes=1001, is_training=False,
             ###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
             net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)
             end_points[end_point] = net
+            print('net shape = ', net.shape())
 
             end_point = 'Max_pool'
             net = slim.max_pool2d(net, [3, 3], stride=2, scope=end_point)
