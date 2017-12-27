@@ -88,9 +88,9 @@ def densenet(images, num_classes=1001, is_training=False,
             net = transtion_layers(net, growth*compression_rate, end_point)
             end_points[end_point] = net
 
-            #end_point = 'first_drpout'
-            #net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            #end_points[end_point] = net
+            end_point = 'first_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
 
             end_point = 'second_block'
             net = dense_block(net, 12, growth, end_point)
@@ -100,9 +100,9 @@ def densenet(images, num_classes=1001, is_training=False,
             net = transtion_layers(net, growth*compression_rate, end_point)
             end_points[end_point] = net
 
-            #end_point = 'second_drpout'
-            #net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            #end_points[end_point] = net
+            end_point = 'second_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
 
             end_point = 'third_block'
             net = dense_block(net, 24, growth, end_point)
@@ -112,9 +112,17 @@ def densenet(images, num_classes=1001, is_training=False,
             net = transtion_layers(net, growth*compression_rate, end_point)
             end_points[end_point] = net
 
-            #end_point = 'third_drpout'
-            #net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            #end_points[end_point] = net
+            end_point = 'third_drpout'
+            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+            end_points[end_point] = net
+
+            shape = net.get_shape().as_list()
+            kernel_size = [shape[1], shape[2]]
+            net = slim.avg_pool2d(net, kernel_size, padding='VALID', scope='glogal_avg_pool')
+            end_points['glogal_avg_pool'] = net
+
+            logits = slim.conv2d(net, growth, [1, 1], activation_fn=None, normalizer_fn=None, scope='logits')
+            end_points['logits'] = logits
 
             #net = slim.softmax(images, scope='predictions')
             #end_points['predictions'] = net
