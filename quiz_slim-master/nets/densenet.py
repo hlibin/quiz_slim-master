@@ -70,7 +70,7 @@ def densenet(images, num_classes=1001, is_training=False,
             ##########################
             # Put your code here.
             ##########################
-            """
+
             end_point = 'Convolution'
             ###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
             net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)
@@ -115,9 +115,9 @@ def densenet(images, num_classes=1001, is_training=False,
             end_point = 'third_drpout'
             net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
             end_points[end_point] = net
-            """
-            net = slim.softmax(images, scope='predictions')
-            end_points['predictions'] = net
+
+            #net = slim.softmax(images, scope='predictions')
+            #end_points['predictions'] = net
 			
             ###每个Convolution layer（除了第一个）后加一个Drop out
 			
