@@ -121,7 +121,7 @@ def densenet(images, num_classes=1001, is_training=False,
             net = slim.avg_pool2d(net, kernel_size, padding='VALID', scope='glogal_avg_pool')
             end_points['glogal_avg_pool'] = net
 
-            net= slim.conv2d(net, growth, [1, 1], activation_fn=None, normalizer_fn=None, scope='logits')
+            net= slim.conv2d(net, 200, [1, 1], activation_fn=None, normalizer_fn=None, scope='logits')
             end_points['logits'] = net
 
             net = tf.squeeze(net, [1, 2], name='squeeze')
