@@ -128,7 +128,7 @@ def densenet(images, num_classes=1001, is_training=False,
             end_points['squeeze'] = net
 
             #net = slim.softmax(images, scope='predictions')
-            #end_points['predictions'] = net
+            end_points['predictions'] = slim.softmax(images, scope='predictions')
 
             ###每个Convolution layer（除了第一个）后加一个Drop out
 			
