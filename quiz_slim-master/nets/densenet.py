@@ -31,7 +31,7 @@ def dense_block(net, layers=40, growth=12, scope='block'):
 
 def transtion_layers(net, num_outputs, scope='block'):
     net = slim.batch_norm(net, scope = scope + '_bn')
-    net = slim.conv2d(net, num_outputs, [1, 1], padding='VALID', scope=scope + '_conv')
+    net = slim.conv2d(net, num_outputs, [1, 1], scope=scope + '_conv')
     net = slim.avg_pool2d(net, [2, 2], stride=2, padding='VALID', scope=scope + '_avg_pool')
     return net
 
@@ -66,73 +66,70 @@ def densenet(images, num_classes=1001, is_training=False,
     with tf.variable_scope(scope, 'DenseNet', [images, num_classes]):
         with slim.arg_scope(bn_drp_scope(is_training=is_training,
                                          keep_prob=dropout_keep_prob)) as ssc:
-            pass
-            ##########################
-            # Put your code here.
-            ##########################
+            with slim.arg_scope(densenet_arg_scope()) as dsc:
+                pass
+                ##########################
+                # Put your code here.
+                ##########################
 
-            end_point = 'Convolution'
-            ###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
-            net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)
-            end_points[end_point] = net
+                end_point = 'Convolution'
+                ###由于这里用的是DenseNet-BC，所以进入第一个dense block时有2*growth channels
+                net = slim.conv2d(images, 2*growth, [7, 7], stride=2, scope=end_point)
+                end_points[end_point] = net
 
-            end_point = 'Max_pool'
-            net = slim.max_pool2d(net, [3, 3], stride=2, scope=end_point)
-            end_points[end_point] = net
+                end_point = 'Max_pool'
+                net = slim.max_pool2d(net, [3, 3], stride=2, scope=end_point)
+                end_points[end_point] = net
 
-            end_point = 'first_block'
-            net = dense_block(net, 6, growth, end_point)
-            end_points[end_point] = net
+                end_point = 'first_block'
+                net = dense_block(net, 6, growth, end_point)
+                end_points[end_point] = net
 
-            end_point = 'first_layer'
-            net = transtion_layers(net, growth*compression_rate, end_point)
-            end_points[end_point] = net
+                end_point = 'first_layer'
+                net = transtion_layers(net, growth*compression_rate, end_point)
+                end_points[end_point] = net
 
-            end_point = 'first_drpout'
-            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            end_points[end_point] = net
+                end_point = 'first_drpout'
+                net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+                end_points[end_point] = net
 
-            end_point = 'second_block'
-            net = dense_block(net, 12, growth, end_point)
-            end_points[end_point] = net
+                end_point = 'second_block'
+                net = dense_block(net, 12, growth, end_point)
+                end_points[end_point] = net
 
-            end_point = 'second_layer'
-            net = transtion_layers(net, growth*compression_rate, end_point)
-            end_points[end_point] = net
+                end_point = 'second_layer'
+                net = transtion_layers(net, growth*compression_rate, end_point)
+                end_points[end_point] = net
 
-            end_point = 'second_drpout'
-            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            end_points[end_point] = net
+                end_point = 'second_drpout'
+                net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+                end_points[end_point] = net
 
-            end_point = 'third_block'
-            net = dense_block(net, 24, growth, end_point)
-            end_points[end_point] = net
+                end_point = 'third_block'
+                net = dense_block(net, 24, growth, end_point)
+                end_points[end_point] = net
 
-            end_point = 'third_layer'
-            net = transtion_layers(net, growth*compression_rate, end_point)
-            end_points[end_point] = net
+                end_point = 'third_layer'
+                net = transtion_layers(net, growth*compression_rate, end_point)
+                end_points[end_point] = net
 
-            end_point = 'third_drpout'
-            net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
-            end_points[end_point] = net
+                end_point = 'third_drpout'
+                net = slim.dropout(net, keep_prob=keep_prob, scope=end_point)
+                end_points[end_point] = net
 
-            shape = net.get_shape().as_list()
-            kernel_size = [shape[1], shape[2]]
-            net = slim.avg_pool2d(net, kernel_size, padding='VALID', scope='glogal_avg_pool')
-            end_points['glogal_avg_pool'] = net
+                shape = net.get_shape().as_list()
+                kernel_size = [shape[1], shape[2]]
+                net = slim.avg_pool2d(net, kernel_size, padding='VALID', scope='glogal_avg_pool')
+                end_points['glogal_avg_pool'] = net
 
-            #net= slim.conv2d(net, 200, [1, 1], activation_fn=None, normalizer_fn=None, scope='logits')
-            #end_points['logits'] = net
+                net= slim.conv2d(net, 200, [1, 1], activation_fn=None, normalizer_fn=None, scope='logits')
+                end_points['logits'] = net
 
-            net = tf.squeeze(net, [1, 2], name='squeeze')
-            end_points['squeeze'] = net
+                net = tf.squeeze(net, [1, 2], name='squeeze')
+                end_points['squeeze'] = net
 
-            #net = slim.softmax(images, scope='predictions')
-            end_points['predictions'] = slim.softmax(images, scope='predictions')
-
-            ###每个Convolution layer（除了第一个）后加一个Drop out
-			
-            ###三个Dense block
+                #net = slim.softmax(images, scope='predictions')
+                end_points['predictions'] = slim.softmax(images, scope='predictions')
 
     return net, end_points
 
